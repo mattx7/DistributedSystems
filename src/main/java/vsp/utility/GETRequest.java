@@ -60,7 +60,7 @@ public class GETRequest {
         BufferedReader bufferedReader = getReader(connection);
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line);
+            stringBuilder.append(line).append("\n");
         }
 
         return stringBuilder.toString();
