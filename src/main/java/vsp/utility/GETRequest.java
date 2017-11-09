@@ -1,5 +1,6 @@
 package vsp.utility;
 
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -12,6 +13,13 @@ import java.net.URL;
  * Starts a connection, saves the result and closes the connection after that.
  */
 public class GETRequest {
+
+    private static final Logger LOG = Logger.getLogger(GETRequest.class);
+
+    /**
+     * Connection timeout in ms.
+     */
+    private static final int CONNECTION_TIMEOUT = 2000;
 
     /**
      * URL to connect to.
@@ -87,6 +95,7 @@ public class GETRequest {
         HttpURLConnection connection = (HttpURLConnection) this.url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
+        connection.setConnectTimeout(CONNECTION_TIMEOUT);
 
         if (connection.getResponseCode() != 200) {
             throw new RuntimeException("Failed : HTTP error code : "
