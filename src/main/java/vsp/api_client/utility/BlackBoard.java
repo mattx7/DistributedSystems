@@ -1,4 +1,4 @@
-package vsp.utility;
+package vsp.api_client.utility;
 
 import org.apache.log4j.Logger;
 
@@ -9,7 +9,7 @@ import java.net.InetAddress;
 
 public class BlackBoard {
 
-    private static final Logger LOG = Logger.getLogger(GETRequest.class);
+    private static final Logger LOG = Logger.getLogger(RESTRequest.class);
 
     /**
      * Private constructor for utility classes.
@@ -18,11 +18,11 @@ public class BlackBoard {
     }
 
     /**
-     * @param remotePort 301
-     * @return 121das
-     * @throws IOException adas
-     */
-    public static InetAddress remoteIpAddress(int remotePort) throws IOException {
+     * @param remotePort
+     * @return
+     * @throws IOException
+     */ // TODO LP WTF is that
+    public static InetAddress getIP(int remotePort) throws IOException {
         DatagramSocket datagramSocket = new DatagramSocket(remotePort);
         LOG.debug(String.format("Hey, Im now listen on port: %d", remotePort));
         byte[] byteArray = new byte[1024];
@@ -33,5 +33,7 @@ public class BlackBoard {
         datagramSocket.close();
         return receivePacket.getAddress();
     }
+
+    // TODO getPort
 
 }

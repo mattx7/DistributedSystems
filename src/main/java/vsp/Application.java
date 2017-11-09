@@ -1,9 +1,10 @@
 package vsp;
 
 import org.apache.log4j.Logger;
-import vsp.utility.BlackBoard;
+import vsp.api_client.APIClient;
+import vsp.api_client.entities.User;
+import vsp.api_client.utility.BlackBoard;
 
-import java.io.Console;
 import java.io.IOException;
 import java.net.InetAddress;
 
@@ -13,18 +14,26 @@ public class Application {
     private static Logger LOG = Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
-        InetAddress restAddress = null;
-        try {
-            restAddress = BlackBoard.remoteIpAddress(BLACKBOARD_PORT);
-            LOG.debug("restAddress: " + restAddress.getHostName() + " Hostaddress:" + restAddress.getHostAddress());
-        } catch (IOException ex) {
-            System.err.println("main(): " + ex);
-        }
+        InetAddress apiAddress;
 
-        // COMANDLINE INTERFACE
-        System.out.println("Please register with your username & password!");
-        Console console = System.console();
-        String username = console.readLine("Username:");
-        String password = console.readLine("password:");
+        try {
+            apiAddress = BlackBoard.getIP(BLACKBOARD_PORT); // TODO Port
+
+            LOG.debug("apiAddress: " + apiAddress.getHostName() + " Hostaddress:" + apiAddress.getHostAddress());
+
+
+            // COMMANDLINE INTERFACE
+            System.out.println("Please register with your username & password!");
+            //Console console = System.console();
+            //String username = console.readLine("Username:");
+            //String password = console.readLine("password:");
+
+            APIClient client = new APIClient(apiAddress.getHostAddress(), 5000);
+
+            System.out.println(client.register(new User("Peter Griffin", "1234")));
+
+        } catch (final IOException e) {
+            LOG.error(e);
+        }
     }
 }

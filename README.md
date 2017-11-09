@@ -13,7 +13,7 @@ Run the jar with:  `java -cp vsp_abw286.jar vsp/Application *.class`
 request:
 
 ```
-curl -H "Content-Type: application/json" -X POST http://172.19.0.3:5000/users -d '{"name":"<username>", "password":"<password>"}'
+curl -H "Content-Type: application/json" -X POST http://172.19.0.3:5000/users -d '{"name":"<name>", "password":"<password>"}'
 ```
 
 responce:
