@@ -8,7 +8,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class BlackBoard {
-
     private static final Logger LOG = Logger.getLogger(RESTRequest.class);
 
     /**
@@ -18,22 +17,27 @@ public class BlackBoard {
     }
 
     /**
-     * @param remotePort
-     * @return
+     * Method to get the ip address from the blackboard
+     *
+     * @param remotePort in int
+     * @return INetAddress
      * @throws IOException
-     */ // TODO LP WTF is that
+     */
     public static InetAddress getIP(int remotePort) throws IOException {
+        // Datagrammsocket erzeugen mit dem angegebenen Port
         DatagramSocket datagramSocket = new DatagramSocket(remotePort);
         LOG.debug(String.format("Hey, Im now listen on port: %d", remotePort));
+        // 1024 Bytes Dummy zum verschicken erzeugen (1024 Buffer)
         byte[] byteArray = new byte[1024];
+        // Erzeugen eines neuen Datagrammes mit dem ByteArray (Byte-Puffer & Größe des Puffers)
         DatagramPacket receivePacket = new DatagramPacket(byteArray, byteArray.length);
-        LOG.debug(String.format("Have created a new DatagramPacket-receivePacket: %s", receivePacket.getLength()));
+        // Warten auf Ankunft eines Datagrammes (solange, bis ein Paket eintrifft)
         datagramSocket.receive(receivePacket);
-        LOG.debug("DatagramSocket now receive the receivePacket!");
+        // Schließen des Sockets
         datagramSocket.close();
+        // Liefert die InetAddress des Host, welches im DatagramPacket vermerkt wurde!
         return receivePacket.getAddress();
     }
 
     // TODO getPort
-
 }
