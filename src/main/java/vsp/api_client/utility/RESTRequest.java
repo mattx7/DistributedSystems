@@ -28,7 +28,7 @@ public class RESTRequest {
     /**
      * Charset for this connection.
      */
-    private static final String CHARSET = "UTF-8";
+    public static final String CHARSET = "UTF-8";
 
     /**
      * Address of the rest api.
@@ -59,6 +59,11 @@ public class RESTRequest {
      */
     @Nullable
     private String body;
+
+    /**
+     * HTTP authentication. Can be set with {@link #auth(HTTPBasicAuth)}}.
+     */
+    private HTTPBasicAuth authentication;
 
     /**
      * Private constructor; Use {@link #to(String)}.
@@ -120,6 +125,20 @@ public class RESTRequest {
 
         this.body = new Gson().toJson(obj);
         LOG.debug("Body " + this.body);
+        return this;
+    }
+
+    /**
+     * Sets a authentication for the http connection.
+     *
+     * @param authentication Not null.
+     * @return This instance for inline use.
+     */
+    public RESTRequest auth(@NotNull final HTTPBasicAuth authentication) {
+        Preconditions.checkNotNull(authentication, "authentication must not be null.");
+
+        this.authentication = authentication;
+        LOG.debug("Auth: " + authentication.getAuthHeader());
         return this;
     }
 
@@ -195,9 +214,14 @@ public class RESTRequest {
 
         LOG.debug("Connecting to " + url.getHost() + url.getPort());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
         connection.setRequestMethod(connectionType.getValue());
-        connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+        connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
+        if (authentication != null) {
+            connection.setRequestProperty("Authorization", "Basic " + authentication.getAuthHeaderInBase64());
+        }
         // LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString());
 
         if (body != null) {

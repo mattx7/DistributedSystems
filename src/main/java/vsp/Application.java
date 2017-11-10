@@ -30,7 +30,7 @@ public class Application {
 
             APIClient client = new APIClient(apiAddress.getHostAddress(), 5000);
 
-            System.out.println(client.register(new User("Peter Griffin", "1234")));
+            System.out.println(client.login(new User("Peter Griffin", "1234")));
 
         } catch (final IOException e) {
             LOG.error(e);

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
 import vsp.api_client.entities.User;
+import vsp.api_client.utility.HTTPBasicAuth;
 import vsp.api_client.utility.HTTPVerb;
 import vsp.api_client.utility.RESTRequest;
 import vsp.api_client.utility.WebResource;
@@ -31,7 +32,7 @@ public class APIClient {
     }
 
     /**
-     * Registers a user to the TODO
+     * Registers a user to the blackboard.
      *
      * @param user Not null.
      */
@@ -43,6 +44,21 @@ public class APIClient {
                 .body(user)
                 .send()
                 .getResponse();
+        // TODO return success or something like that and LOG the response
+    }
+
+    /**
+     * Login to receive a authentication token
+     */
+    public String login(@NotNull final User user) throws IOException {
+        LOG.debug("Login with user " + user.getName());
+        return RESTRequest.to(targetURL)
+                .resource(WebResource.LOGIN)
+                .type(HTTPVerb.GET)
+                .auth(HTTPBasicAuth.forUser(user))
+                .send()
+                .getResponse();
+        // TODO return only the token
     }
 
 }
