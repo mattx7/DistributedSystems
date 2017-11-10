@@ -6,17 +6,17 @@ import org.jetbrains.annotations.NotNull;
  * Offers all possible resources from the rest api.
  */
 public enum WebResource {
-    USERS("/users"), LOGIN("/login"), WHOAMI("/whoami");
+    USERS("/users"), LOGIN("/login"), WHOAMI("/whoami"), QUESTS("/blackboard/quests"), MAP("/map");
 
     @NotNull
-    private String value;
+    private String path;
 
-    WebResource(@NotNull final String value) {
-        this.value = value;
+    WebResource(@NotNull final String path) {
+        this.path = path;
     }
 
     @NotNull
-    public String getValue() {
-        return value;
+    public String getPath() {
+        return path;
     }
 }

@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representation of an request for a REST-API.
@@ -96,7 +98,7 @@ public class RESTRequest {
         Preconditions.checkNotNull(resource, "resource must not be null.");
 
         this.resource = resource;
-        LOG.debug("Resource: " + this.resource.getValue());
+        LOG.debug("Resource: " + this.resource.getPath());
         return this;
     }
 
@@ -153,7 +155,7 @@ public class RESTRequest {
         Preconditions.checkState(connectionType != null, "connectionType has to be set");
         Preconditions.checkState(resource != null, "resource has to be set");
 
-        final URL url = new URL(targetURL + resource.getValue());
+        final URL url = new URL(targetURL + resource.getPath());
         HttpURLConnection connection = establishConnection(url);
         response = extractResponse(connection);
         connection.disconnect();
@@ -239,5 +241,10 @@ public class RESTRequest {
         }
 
         return connection;
+    }
+
+    public <T> List<T> getResponse(@NotNull final Class<T> clazz) {
+        // TODO Convert response to given class.
+        return new ArrayList<T>();
     }
 }

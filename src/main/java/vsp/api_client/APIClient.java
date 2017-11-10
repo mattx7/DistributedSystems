@@ -4,6 +4,7 @@ package vsp.api_client;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
+import vsp.api_client.entities.Quest;
 import vsp.api_client.entities.User;
 import vsp.api_client.utility.HTTPBasicAuth;
 import vsp.api_client.utility.HTTPVerb;
@@ -11,6 +12,7 @@ import vsp.api_client.utility.RESTRequest;
 import vsp.api_client.utility.WebResource;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Offers operations from the given API.
@@ -83,5 +85,29 @@ public class APIClient {
                 .send()
                 .getResponse();
     }
+
+    // TODO quests
+    public List<Quest> quests() throws IOException {
+        LOG.debug("View quests");
+
+        return RESTRequest.to(targetURL)
+                .resource(WebResource.QUESTS)
+                .type(HTTPVerb.GET)
+                .send()
+                .getResponse(Quest.class);
+    }
+
+    // TODO map
+    public String map(@NotNull final String location) throws IOException {
+        LOG.debug("View quests");
+
+        return RESTRequest.to(targetURL)
+                //.resource(WebResource.MAP + location) // TODO
+                .type(HTTPVerb.GET)
+                .send()
+                .getResponse();
+    }
+
+
 
 }
