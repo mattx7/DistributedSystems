@@ -4,15 +4,15 @@ package vsp.api_client;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
-import vsp.api_client.entities.Quest;
+import vsp.api_client.entities.QuestWrapper;
+import vsp.api_client.entities.Token;
 import vsp.api_client.entities.User;
-import vsp.api_client.utility.HTTPBasicAuth;
-import vsp.api_client.utility.HTTPVerb;
-import vsp.api_client.utility.RESTRequest;
+import vsp.api_client.http.HTTPBasicAuth;
+import vsp.api_client.http.HTTPRequest;
+import vsp.api_client.http.HTTPVerb;
 import vsp.api_client.utility.WebResource;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Offers operations from the given API.
@@ -42,13 +42,13 @@ public class APIClient {
      */
     public String register(@NotNull final User user) throws IOException {
         LOG.debug("Registration with user " + user.getName());
-        return RESTRequest.to(targetURL)
+        return HTTPRequest
+                .to(targetURL)
                 .resource(WebResource.USERS)
                 .type(HTTPVerb.POST)
                 .body(user)
                 .send()
-                .getResponse();
-        // TODO return success or something like that and LOG the response
+                .getJson();
     }
 
     /**
@@ -58,15 +58,15 @@ public class APIClient {
      * @return TODO
      * @throws IOException If connection fails.
      */
-    public String login(@NotNull final User user) throws IOException {
-        LOG.debug("Login with user " + user.getName());
-        return RESTRequest.to(targetURL)
+    public Token login(@NotNull final User user) throws IOException {
+        LOG.debug("Login with user '" + user.getName() + "'...");
+        return HTTPRequest
+                .to(targetURL)
                 .resource(WebResource.LOGIN)
                 .type(HTTPVerb.GET)
                 .auth(HTTPBasicAuth.forUser(user))
                 .send()
-                .getResponse();
-        // TODO return only the token
+                .getAs(Token.class);
     }
 
     /**
@@ -78,36 +78,36 @@ public class APIClient {
      */
     public String whoAmI(@NotNull final User user) throws IOException {
         LOG.debug("WhoAmI with user " + user.getName());
-        return RESTRequest.to(targetURL)
+        return HTTPRequest
+                .to(targetURL)
                 .resource(WebResource.WHOAMI)
                 .type(HTTPVerb.GET)
                 .auth(HTTPBasicAuth.forUser(user))
                 .send()
-                .getResponse();
+                .getJson();
     }
 
     // TODO quests
-    public List<Quest> quests() throws IOException {
+    public QuestWrapper quests() throws IOException {
         LOG.debug("View quests");
-
-        return RESTRequest.to(targetURL)
+        return HTTPRequest
+                .to(targetURL)
                 .resource(WebResource.QUESTS)
                 .type(HTTPVerb.GET)
                 .send()
-                .getResponse(Quest.class);
+                .getAs(QuestWrapper.class);
     }
 
     // TODO map
     public String map(@NotNull final String location) throws IOException {
         LOG.debug("View quests");
-
-        return RESTRequest.to(targetURL)
+        return HTTPRequest
+                .to(targetURL)
                 //.resource(WebResource.MAP + location) // TODO
                 .type(HTTPVerb.GET)
                 .send()
-                .getResponse();
+                .getJson();
     }
-
 
 
 }

@@ -1,4 +1,4 @@
-package vsp.api_client.utility;
+package vsp.api_client.http;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;

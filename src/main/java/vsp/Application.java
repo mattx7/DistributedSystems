@@ -2,6 +2,8 @@ package vsp;
 
 import org.apache.log4j.Logger;
 import vsp.api_client.APIClient;
+import vsp.api_client.entities.Quest;
+import vsp.api_client.entities.Token;
 import vsp.api_client.entities.User;
 import vsp.api_client.utility.BlackBoard;
 
@@ -26,9 +28,20 @@ public class Application {
             //String password = console.readLine("password:");
 
             APIClient client = new APIClient(apiAddress.getHostAddress(), 5000);
+            User alreadyExistingTestUser = new User("Peter Griffin", "1234");
 
-            System.out.println(client.login(new User("Peter Griffin", "1234")));
-            System.out.println(client.whoAmI(new User("Peter Griffin", "1234")));
+            // System.out.println(client.register(alreadyExistingTestUser));
+            Token token = client.login(alreadyExistingTestUser);
+            LOG.debug("Token received: " + token.getToken());
+
+            System.out.println(client.whoAmI(alreadyExistingTestUser)); // TODO maybe stay with this default json output!?
+
+            System.out.println("Quests:");
+            client.quests().getObjects()
+                    .stream()
+                    .map(Quest::getName)
+                    .forEach(System.out::println);
+
 
         } catch (final IOException e) {
             LOG.error(e);

@@ -1,10 +1,11 @@
-package vsp.api_client.utility;
+package vsp.api_client.http;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import vsp.api_client.utility.WebResource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,15 +13,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Representation of an request for a REST-API.
  */
-public class RESTRequest {
+public class HTTPRequest {
 
-    private static final Logger LOG = Logger.getLogger(RESTRequest.class);
+    private static final Logger LOG = Logger.getLogger(HTTPRequest.class);
 
     /**
      * Connection timeout in ms.
@@ -30,19 +29,13 @@ public class RESTRequest {
     /**
      * Charset for this connection.
      */
-    public static final String CHARSET = "UTF-8";
+    private static final String CHARSET = "UTF-8";
 
     /**
      * Address of the rest api.
      */
     @NotNull
     private String targetURL;
-
-    /**
-     * Response message from the request. Set after {@link #send()}.
-     */
-    @Nullable
-    private String response;
 
     /**
      * Type of request. <b>HAS TO BE SET BEFORE {@link #send()}</b>
@@ -54,7 +47,7 @@ public class RESTRequest {
      * Resource from the rest api. <b>HAS TO BE SET BEFORE {@link #send()}</b>
      */
     @Nullable
-    private WebResource resource;
+    private WebResource webResource;
 
     /**
      * Message body. Can be set with {@link #body(Object)}.
@@ -72,7 +65,7 @@ public class RESTRequest {
      *
      * @param targetURL Not null.
      */
-    private RESTRequest(@NotNull String targetURL) {
+    private HTTPRequest(@NotNull String targetURL) {
         this.targetURL = targetURL;
     }
 
@@ -82,10 +75,10 @@ public class RESTRequest {
      * @param targetURL Address to the rest api.
      * @return This instance for inline use.
      */
-    public static RESTRequest to(@NotNull final String targetURL) {
-        Preconditions.checkNotNull(targetURL, "targetURL must not be null.");
+    public static HTTPRequest to(@NotNull final String targetURL) {
+        Preconditions.checkNotNull(targetURL, "targetURL should not be null.");
 
-        return new RESTRequest(targetURL);
+        return new HTTPRequest(targetURL);
     }
 
     /**
@@ -94,11 +87,11 @@ public class RESTRequest {
      * @param resource Not null.
      * @return This instance for inline use.
      */
-    public RESTRequest resource(@NotNull final WebResource resource) {
-        Preconditions.checkNotNull(resource, "resource must not be null.");
+    public HTTPRequest resource(@NotNull final WebResource resource) {
+        Preconditions.checkNotNull(resource, "webResource should not be null.");
 
-        this.resource = resource;
-        LOG.debug("Resource: " + this.resource.getPath());
+        this.webResource = resource;
+        LOG.debug("Resource: " + this.webResource.getPath());
         return this;
     }
 
@@ -108,8 +101,8 @@ public class RESTRequest {
      * @param type Not null.
      * @return This instance for inline use.
      */
-    public RESTRequest type(@NotNull final HTTPVerb type) {
-        Preconditions.checkNotNull(type, "type must not be null.");
+    public HTTPRequest type(@NotNull final HTTPVerb type) {
+        Preconditions.checkNotNull(type, "type should not be null.");
 
         this.connectionType = type;
         LOG.debug("HTTP Verb: " + this.connectionType.getValue());
@@ -122,8 +115,8 @@ public class RESTRequest {
      * @param obj Not null.
      * @return This instance for inline use.
      */
-    public <T> RESTRequest body(@NotNull final T obj) throws IOException {
-        Preconditions.checkNotNull(obj, "obj must not be null.");
+    public <T> HTTPRequest body(@NotNull final T obj) throws IOException {
+        Preconditions.checkNotNull(obj, "obj should not be null.");
 
         this.body = new Gson().toJson(obj);
         LOG.debug("Body " + this.body);
@@ -136,8 +129,8 @@ public class RESTRequest {
      * @param authentication Not null.
      * @return This instance for inline use.
      */
-    public RESTRequest auth(@NotNull final HTTPBasicAuth authentication) {
-        Preconditions.checkNotNull(authentication, "authentication must not be null.");
+    public HTTPRequest auth(@NotNull final HTTPBasicAuth authentication) {
+        Preconditions.checkNotNull(authentication, "authentication should not be null.");
 
         this.authentication = authentication;
         LOG.debug("Auth: " + authentication.getAuthHeader());
@@ -151,46 +144,18 @@ public class RESTRequest {
      * @throws IOException If connection fails.
      */
     @NotNull
-    public RESTRequest send() throws IOException {
+    public HTTPResponse send() throws IOException {
         Preconditions.checkState(connectionType != null, "connectionType has to be set");
-        Preconditions.checkState(resource != null, "resource has to be set");
+        Preconditions.checkState(webResource != null, "webResource has to be set");
 
-        final URL url = new URL(targetURL + resource.getPath());
+        final URL url = new URL(targetURL + webResource.getPath());
         HttpURLConnection connection = establishConnection(url);
-        response = extractResponse(connection);
+        HTTPResponse response = new HTTPResponse(extractResponse(connection));
         connection.disconnect();
-        return this;
-    }
-
-    /**
-     * Returns response message.
-     *
-     * @return May be null.
-     */
-    @Nullable
-    public String getResponse() {
         return response;
     }
 
     // -------- PRIVATE --------
-
-    /**
-     * Return response message.
-     *
-     * @throws IOException If connection fails.
-     */
-    @NotNull
-    private String extractResponse(@NotNull final HttpURLConnection connection) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        BufferedReader bufferedReader = getReader(connection);
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line).append("\n");
-        }
-
-        return stringBuilder.toString();
-    }
 
     /**
      * Returns reader for connection response.
@@ -204,6 +169,24 @@ public class RESTRequest {
     }
 
     /**
+     * Return response message.
+     *
+     * @throws IOException If connection fails.
+     */
+    @NotNull //TODO really NotNull?
+    private String extractResponse(@NotNull final HttpURLConnection connection) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        BufferedReader bufferedReader = getReader(connection);
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line).append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
      * Starts the connection. <b>{@link #resource(WebResource)} and {@link #type(HTTPVerb)} has to be set before this method</b>
      *
      * @param url address to connect to.
@@ -212,9 +195,9 @@ public class RESTRequest {
      */
     private HttpURLConnection establishConnection(@NotNull final URL url) throws IOException {
         Preconditions.checkState(connectionType != null, "connectionType has to be set");
-        Preconditions.checkState(resource != null, "resource has to be set");
+        Preconditions.checkState(webResource != null, "webResource has to be set");
 
-        LOG.debug("Connecting to " + url.getHost() + url.getPort());
+        LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod(connectionType.getValue());
@@ -240,11 +223,8 @@ public class RESTRequest {
                     + connection.getResponseCode());
         }
 
-        return connection;
-    }
+        // TODO ERROR 409 Conflict -> already existing
 
-    public <T> List<T> getResponse(@NotNull final Class<T> clazz) {
-        // TODO Convert response to given class.
-        return new ArrayList<T>();
+        return connection;
     }
 }

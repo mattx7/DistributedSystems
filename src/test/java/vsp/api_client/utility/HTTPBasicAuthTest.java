@@ -2,6 +2,7 @@ package vsp.api_client.utility;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import vsp.api_client.http.HTTPBasicAuth;
 
 public class HTTPBasicAuthTest {
 
