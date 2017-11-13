@@ -1,4 +1,4 @@
-package vsp.api_client.http;
+package vsp.api_client.http.auth;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import java.util.Base64;
 /**
  * Representation of a basic authentication for
  */
-public class HTTPBasicAuth {
+public class HTTPBasicAuth implements HTTPAuthentication {
 
     @NotNull
     private final String username;
@@ -38,12 +38,16 @@ public class HTTPBasicAuth {
         return new HTTPBasicAuth(user.getName(), user.getPassword());
     }
 
-    public String getAuthHeader() {
+    public String getAsString() {
         return username + ":" + password;
     }
 
-    public String getAuthHeaderInBase64() {
-        final Base64.Encoder encoder = Base64.getEncoder();
-        return encoder.encodeToString(getAuthHeader().getBytes());
+    public String getAuthHeader() {
+        return "Basic " + Base64.getEncoder().encodeToString(getAsString().getBytes());
+    }
+
+    @Override
+    public String getDebugInfo() {
+        return getAsString();
     }
 }

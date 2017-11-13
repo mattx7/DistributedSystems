@@ -5,10 +5,11 @@ import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
 import vsp.api_client.entities.User;
-import vsp.api_client.http.HTTPBasicAuth;
 import vsp.api_client.http.HTTPRequest;
 import vsp.api_client.http.HTTPResponse;
 import vsp.api_client.http.HTTPVerb;
+import vsp.api_client.http.auth.HTTPBasicAuth;
+import vsp.api_client.http.auth.HTTPTokenAuth;
 import vsp.api_client.http.web_resource.DebugResource;
 import vsp.api_client.http.web_resource.MainResource;
 import vsp.api_client.http.web_resource.SubResource;
@@ -108,7 +109,7 @@ public class APIClient {
                 .to(targetURL)
                 .resource(MainResource.WHOAMI)
                 .type(HTTPVerb.GET)
-                .auth(HTTPBasicAuth.forUser(user))
+                .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
 

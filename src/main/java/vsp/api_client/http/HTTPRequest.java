@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import vsp.api_client.http.auth.HTTPAuthentication;
 import vsp.api_client.http.web_resource.WebResource;
 
 import java.io.BufferedReader;
@@ -56,9 +57,9 @@ public class HTTPRequest {
     private String body;
 
     /**
-     * HTTP authentication. Can be set with {@link #auth(HTTPBasicAuth)}}.
+     * HTTP authentication. Can be set with {@link #auth(HTTPAuthentication)}}.
      */
-    private HTTPBasicAuth authentication;
+    private HTTPAuthentication authentication;
 
     /**
      * Private constructor; Use {@link #to(String)}.
@@ -129,11 +130,11 @@ public class HTTPRequest {
      * @param authentication Not null.
      * @return This instance for inline use.
      */
-    public HTTPRequest auth(@NotNull final HTTPBasicAuth authentication) {
+    public HTTPRequest auth(@NotNull final HTTPAuthentication authentication) {
         Preconditions.checkNotNull(authentication, "authentication should not be null.");
 
         this.authentication = authentication;
-        LOG.debug("Auth: " + authentication.getAuthHeader());
+        LOG.debug("Auth: " + authentication.getDebugInfo());
         return this;
     }
 
@@ -203,11 +204,11 @@ public class HTTPRequest {
         connection.setRequestMethod(connectionType.getValue());
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
 
-        connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
+        connection.addRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
         if (authentication != null) {
-            connection.setRequestProperty("Authorization", "Basic " + authentication.getAuthHeaderInBase64());
+            LOG.debug("settings auth header...");
+            connection.addRequestProperty("Authorization", authentication.getAuthHeader());
         }
-        // LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString());
 
         if (body != null) {
             // send body (json)
@@ -218,8 +219,10 @@ public class HTTPRequest {
             outputStream.close();
         }
 
+        LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString());
+
         if (connection.getResponseCode() >= 300) {
-            throw new HTTPConnectionException(connection.getResponseCode());
+            throw new HTTPConnectionException(connection.getResponseCode(), connection.getResponseMessage());
         }
 
         return connection;

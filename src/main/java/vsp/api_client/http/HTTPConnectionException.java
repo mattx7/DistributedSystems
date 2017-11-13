@@ -1,5 +1,7 @@
 package vsp.api_client.http;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 /**
@@ -7,14 +9,16 @@ import java.io.IOException;
  */
 public class HTTPConnectionException extends IOException {
 
-    private int errorCode;
+    private final int errorCode;
 
-    HTTPConnectionException(int errorCode) {
-        super("Connection Failed : HTTP error code : " + errorCode);
+    HTTPConnectionException(final int errorCode,
+                            @NotNull final String message) {
+        super(errorCode + " " + message);
         this.errorCode = errorCode;
     }
 
     public int getErrorCode() {
         return errorCode;
     }
+
 }

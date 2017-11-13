@@ -23,10 +23,10 @@ public class Application {
     private static final String MAP = "!map";
     private static final String DELIVERIES = "!deliveries";
     private static final String TASK = "!task";
-    private static final String AWAIT_COMMAND_MARKER = "#";
     private static final String QUIT = "!quit";
     private static final String GET = "!get";
     private static final String POST = "!post";
+    private static final String AWAIT_COMMAND_MARKER = "#IN>";
     private static Logger LOG = Logger.getLogger(Application.class);
 
     /**
@@ -146,8 +146,8 @@ public class Application {
     private static User insertUser() {
         print("Please login or register with a username and password!");
         terminal = System.console();
-        String username = terminal.readLine("Username:");
-        String password = terminal.readLine("password:");
+        String username = terminal.readLine("Username: ");
+        String password = terminal.readLine("password: ");
         return new User(username, password);
     }
 
@@ -173,19 +173,17 @@ public class Application {
             LOG.debug(response);
             print("User is now registered!");
 
-
-            // login
-            final Token token = client.login(user).getAs(Token.class);
-            user.setToken(token);
-            print((token == null) ? "Login failed!" : "User logged in");
         } catch (final HTTPConnectionException e) {
             if (e.getErrorCode() == 409)
                 print("User already registered!");
             else
-                LOG.error(e);
+                LOG.error(e.getMessage());
         }
 
-
+        // login
+        final Token token = client.login(user).getAs(Token.class);
+        user.setToken(token);
+        print((token == null) ? "Login failed!" : "User logged in");
     }
 
     private static void print(@NotNull String message) {
