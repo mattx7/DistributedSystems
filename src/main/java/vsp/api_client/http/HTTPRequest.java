@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vsp.api_client.utility.WebResource;
+import vsp.api_client.http.web_resource.WebResource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -197,7 +197,7 @@ public class HTTPRequest {
         Preconditions.checkState(connectionType != null, "connectionType has to be set");
         Preconditions.checkState(webResource != null, "webResource has to be set");
 
-        LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort());
+        LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort() + url.getPath());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod(connectionType.getValue());
@@ -219,11 +219,8 @@ public class HTTPRequest {
         }
 
         if (connection.getResponseCode() >= 300) {
-            throw new RuntimeException("Failed : HTTP error code : "
-                    + connection.getResponseCode());
+            throw new HTTPConnectionException(connection.getResponseCode());
         }
-
-        // TODO ERROR 409 Conflict -> already existing
 
         return connection;
     }

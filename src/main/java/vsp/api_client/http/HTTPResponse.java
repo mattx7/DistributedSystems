@@ -31,7 +31,7 @@ public class HTTPResponse {
      * @param <T>  Type of the desired object.
      * @return An object of type T. Returns null if response is null or empty.
      */
-    @Nullable
+    @Nullable // TODO make @NotNull
     public <T> T getAs(@NotNull final Class<T> type) {
         Preconditions.checkNotNull(type, "type should not be null.");
 

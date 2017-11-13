@@ -4,13 +4,14 @@ package vsp.api_client;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
-import vsp.api_client.entities.QuestWrapper;
-import vsp.api_client.entities.Token;
 import vsp.api_client.entities.User;
 import vsp.api_client.http.HTTPBasicAuth;
 import vsp.api_client.http.HTTPRequest;
+import vsp.api_client.http.HTTPResponse;
 import vsp.api_client.http.HTTPVerb;
-import vsp.api_client.utility.WebResource;
+import vsp.api_client.http.web_resource.DebugResource;
+import vsp.api_client.http.web_resource.MainResource;
+import vsp.api_client.http.web_resource.SubResource;
 
 import java.io.IOException;
 
@@ -33,6 +34,33 @@ public class APIClient {
         LOG.debug("URL: " + targetURL);
     }
 
+    // ======= for debug/testing ======
+
+    public HTTPResponse get(@NotNull final User user,
+                            @NotNull final String path) throws IOException {
+        LOG.debug("Registration with user " + user.getName());
+        return HTTPRequest
+                .to(targetURL)
+                .resource(new DebugResource(path))
+                .type(HTTPVerb.GET)
+                .body(user)
+                .send();
+    }
+
+    public HTTPResponse post(@NotNull final User user,
+                             @NotNull final String path,
+                             @NotNull final String body) throws IOException {
+        LOG.debug("Registration with user " + user.getName());
+        return HTTPRequest
+                .to(targetURL)
+                .resource(new DebugResource(path))
+                .type(HTTPVerb.POST)
+                .body(user)
+                .send();
+    }
+
+    //  =====================================
+
     /**
      * Registers a user to the blackboard.
      *
@@ -40,15 +68,14 @@ public class APIClient {
      * @return TODO
      * @throws IOException If connection fails.
      */
-    public String register(@NotNull final User user) throws IOException {
+    public HTTPResponse register(@NotNull final User user) throws IOException {
         LOG.debug("Registration with user " + user.getName());
         return HTTPRequest
                 .to(targetURL)
-                .resource(WebResource.USERS)
+                .resource(MainResource.USERS)
                 .type(HTTPVerb.POST)
                 .body(user)
-                .send()
-                .getJson();
+                .send();
     }
 
     /**
@@ -58,15 +85,14 @@ public class APIClient {
      * @return TODO
      * @throws IOException If connection fails.
      */
-    public Token login(@NotNull final User user) throws IOException {
+    public HTTPResponse login(@NotNull final User user) throws IOException {
         LOG.debug("Login with user '" + user.getName() + "'...");
         return HTTPRequest
                 .to(targetURL)
-                .resource(WebResource.LOGIN)
+                .resource(MainResource.LOGIN)
                 .type(HTTPVerb.GET)
                 .auth(HTTPBasicAuth.forUser(user))
-                .send()
-                .getAs(Token.class);
+                .send();
     }
 
     /**
@@ -76,37 +102,61 @@ public class APIClient {
      * @return TODO
      * @throws IOException If connection fails.
      */
-    public String whoAmI(@NotNull final User user) throws IOException {
+    public HTTPResponse whoAmI(@NotNull final User user) throws IOException {
         LOG.debug("WhoAmI with user " + user.getName());
         return HTTPRequest
                 .to(targetURL)
-                .resource(WebResource.WHOAMI)
+                .resource(MainResource.WHOAMI)
                 .type(HTTPVerb.GET)
                 .auth(HTTPBasicAuth.forUser(user))
-                .send()
-                .getJson();
+                .send();
     }
 
     // TODO quests
-    public QuestWrapper quests() throws IOException {
+    public HTTPResponse quests() throws IOException {
         LOG.debug("View quests");
         return HTTPRequest
                 .to(targetURL)
-                .resource(WebResource.QUESTS)
+                .resource(MainResource.QUESTS)
                 .type(HTTPVerb.GET)
-                .send()
-                .getAs(QuestWrapper.class);
+                .send();
+    }
+
+    public HTTPResponse questDeliveries(@NotNull final User user,
+                                        @NotNull final Integer questId) throws IOException {
+        LOG.debug("View quests");
+        return HTTPRequest
+                .to(targetURL)
+                .resource(SubResource.from(
+                        MainResource.QUESTS,
+                        String.valueOf(questId),
+                        "deliveries"))
+                .type(HTTPVerb.GET)
+                .auth(HTTPBasicAuth.forUser(user))
+                .send();
+    }
+
+    public HTTPResponse questTasks(@NotNull final User user,
+                                   @NotNull final Integer questId) throws IOException {
+        LOG.debug("View quests");
+        return HTTPRequest
+                .to(targetURL)
+                .resource(SubResource.from(MainResource.QUESTS, String.valueOf(questId), "tasks"))
+                .type(HTTPVerb.GET)
+                .auth(HTTPBasicAuth.forUser(user))
+                .send();
     }
 
     // TODO map
-    public String map(@NotNull final String location) throws IOException {
+    public HTTPResponse map(@NotNull final User user,
+                            @NotNull final String location) throws IOException {
         LOG.debug("View quests");
         return HTTPRequest
                 .to(targetURL)
-                //.resource(WebResource.MAP + location) // TODO
+                .resource(SubResource.from(MainResource.MAP, location))
                 .type(HTTPVerb.GET)
-                .send()
-                .getJson();
+                .auth(HTTPBasicAuth.forUser(user))
+                .send();
     }
 
 

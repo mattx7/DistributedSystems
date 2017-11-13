@@ -1,6 +1,7 @@
 package vsp.api_client.entities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Representation of a user from the rest api.
@@ -13,9 +14,16 @@ public class User {
     @NotNull
     private String password;
 
+    @Nullable
+    private Token token;
+
     public User(@NotNull String name, @NotNull String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public void setToken(@Nullable Token token) {
+        this.token = token;
     }
 
     @NotNull
@@ -26,6 +34,11 @@ public class User {
     @NotNull
     public String getPassword() {
         return password;
+    }
+
+    @Nullable
+    public Token getToken() {
+        return token;
     }
 
     @Override
