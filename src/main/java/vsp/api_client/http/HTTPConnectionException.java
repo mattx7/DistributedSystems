@@ -12,8 +12,9 @@ public class HTTPConnectionException extends IOException {
     private final int errorCode;
 
     HTTPConnectionException(final int errorCode,
+                            @NotNull final String codeDetails,
                             @NotNull final String message) {
-        super(errorCode + " " + message);
+        super(errorCode + " " + codeDetails + "\n" + message);
         this.errorCode = errorCode;
     }
 

@@ -8,10 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import vsp.api_client.http.auth.HTTPAuthentication;
 import vsp.api_client.http.web_resource.WebResource;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -159,15 +156,15 @@ public class HTTPRequest {
     // -------- PRIVATE --------
 
     /**
-     * Returns reader for connection response.
+     * Returns buffered reader for input stream response.
      *
      * @return Not null.
-     * @throws IOException If connection fails.
      */
     @NotNull
-    private BufferedReader getReader(@NotNull final HttpURLConnection connection) throws IOException {
-        return new BufferedReader(new InputStreamReader((connection.getInputStream())));
+    private BufferedReader getReader(@NotNull final InputStream inputStream) {
+        return new BufferedReader(new InputStreamReader((inputStream)));
     }
+
 
     /**
      * Return response message.
@@ -176,15 +173,24 @@ public class HTTPRequest {
      */
     @NotNull //TODO really NotNull?
     private String extractResponse(@NotNull final HttpURLConnection connection) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
+        final boolean noErrorOccurred = connection.getErrorStream() == null;
+        BufferedReader responseReader = noErrorOccurred ?
+                getReader(connection.getInputStream()) :
+                getReader(connection.getErrorStream());
 
-        BufferedReader bufferedReader = getReader(connection);
+        StringBuilder stringBuilder = new StringBuilder();
         String line;
-        while ((line = bufferedReader.readLine()) != null) {
+        while ((line = responseReader.readLine()) != null) {
             stringBuilder.append(line).append("\n");
         }
 
-        return stringBuilder.toString();
+        if (noErrorOccurred)
+            return stringBuilder.toString();
+        else
+            throw new HTTPConnectionException(
+                    connection.getResponseCode(),
+                    connection.getResponseMessage(),
+                    stringBuilder.toString());
     }
 
     /**
@@ -218,13 +224,7 @@ public class HTTPRequest {
             outputStream.write(body.getBytes(CHARSET));
             outputStream.close();
         }
-
         LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString());
-
-        if (connection.getResponseCode() >= 300) {
-            throw new HTTPConnectionException(connection.getResponseCode(), connection.getResponseMessage());
-        }
-
         return connection;
     }
 }
