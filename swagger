@@ -1,0 +1,177 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: VSP_Tavern
+paths:
+  '/help':
+    post:
+      tags:
+        - help
+      summary: creates a new help offer;
+      operationId: createOffer
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: help
+          description: help from adventurer to add
+          required: true
+          schema:
+            $ref: '#/definitions/Help'
+      responses:
+        '200':
+          description: help response
+          schema:
+            $ref: '#/definitions/Help'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+  '/offers':
+    get:
+      tags:
+        - help
+      summary: Get help offers 
+      description: returns list of `help offer` objects
+      operationId: getHelp
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: help response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Help'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+  '/offers/{heroClass}':
+    get:
+      tags:
+        - help
+      summary: Get help offers from spec. heroclass
+      description: returns list of `help offer` objects
+      operationId: getSpecHelp
+      parameters: 
+        - name: heroClass
+          in: path
+          description: class of the hero
+          required: true
+          type: string
+      consumes: 
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: help response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Help'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+  '/help/{helpId}':
+    put:
+      tags:
+        - help
+      summary: updates a help offer
+      description: Updates a help offer
+      operationId: updateOffer
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: helpId
+          in: path
+          description: ID of meeting to delete must be positive int
+          required: true
+          type: integer
+          format: int64
+        - name: helpoffer
+          in: body
+          description: offer to update
+          required: true
+          schema: 
+            $ref: '#/definitions/Help'
+      responses:
+        '200':
+          description: success
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Help not found
+        '405':
+          description: Validation exception
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+  '/offers/delete/{helpId}':
+    delete:
+      tags:
+        - help
+      summary: Delete help offer
+      description: Deletes a single help offer of the  supplied ID
+      operationId: deleteHelpOffer
+      parameters:
+        - name: helpId
+          in: path
+          description: ID of help offer to delete must be positive
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: offer deleted
+        '404':
+          description: offer not found
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+definitions:
+  Help:
+    type: object
+    required:
+      - name
+      - heroClass
+      - contact
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: my offer
+      heroClass:
+        type: string
+        example: warrior
+      contact:
+        type: string
+        example: mail@mailer.com
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
