@@ -2,10 +2,14 @@ group 'distributed_systems'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 
 jar {
     baseName = 'vsp_abw286'
+    manifest {
+        attributes 'Main-Class': 'vsp.Application'
+    }
 }
 
 sourceCompatibility = 1.8
@@ -28,6 +32,9 @@ dependencies {
 
 task fatJar(type: Jar) {
     baseName = 'vsp_abw286'
+    manifest {
+        attributes 'Main-Class': 'vsp.Application'
+    }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }

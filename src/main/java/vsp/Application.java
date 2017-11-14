@@ -42,6 +42,7 @@ public class Application {
     }
 
     public static void main(String[] args) {
+        print("Starting application...");
         InetAddress apiAddress;
 
         try {
