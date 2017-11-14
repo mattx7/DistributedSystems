@@ -16,7 +16,7 @@ public class HTTPBasicAuthTest {
         // check method to test
         final String authHeaderInBase64 = auth.getAuthHeader();
         // post-conditions
-        Assert.assertEquals(authHeaderInBase64, "bmFtZTpwYXNz"); // expected from https://www.base64encode.org/
+        Assert.assertEquals(authHeaderInBase64, "Basic bmFtZTpwYXNz"); // expected from https://www.base64encode.org/
     }
 
 }

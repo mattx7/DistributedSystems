@@ -147,10 +147,7 @@ public class HTTPRequest {
         Preconditions.checkState(webResource != null, "webResource has to be set");
 
         final URL url = new URL(targetURL + webResource.getPath());
-        HttpURLConnection connection = establishConnection(url);
-        HTTPResponse response = new HTTPResponse(extractResponse(connection));
-        connection.disconnect();
-        return response;
+        return establishResponse(url);
     }
 
     // -------- PRIVATE --------
@@ -167,12 +164,44 @@ public class HTTPRequest {
 
 
     /**
-     * Return response message.
+     * Starts the connection. <b>{@link #resource(WebResource)} and {@link #type(HTTPVerb)} has to be set before this method</b>
      *
+     * @param url address to connect to.
+     * @return Not null.
      * @throws IOException If connection fails.
      */
-    @NotNull //TODO really NotNull?
-    private String extractResponse(@NotNull final HttpURLConnection connection) throws IOException {
+    private HTTPResponse establishResponse(@NotNull final URL url) throws IOException {
+        Preconditions.checkState(connectionType != null, "connectionType has to be set");
+        Preconditions.checkState(webResource != null, "webResource has to be set");
+
+        LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort() + url.getPath());
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod(connectionType.getValue());
+        connection.setConnectTimeout(CONNECTION_TIMEOUT);
+
+        if (authentication != null) {
+            LOG.debug("settings auth header...");
+            connection.setRequestProperty("Authorization", authentication.getAuthHeader());
+        }
+
+        if (body != null) {
+            // send body (json)
+            connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
+
+            LOG.debug("Sending body...");
+            try {
+                connection.setDoOutput(true);
+                OutputStream outputStream = connection.getOutputStream();
+                outputStream.write(body.getBytes(CHARSET));
+                outputStream.close();
+            } catch (final IOException e) {
+                LOG.error(e);
+            }
+        }
+        LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString() + connection.getContentType());
+
+
         final boolean noErrorOccurred = connection.getErrorStream() == null;
         BufferedReader responseReader = noErrorOccurred ?
                 getReader(connection.getInputStream()) :
@@ -184,47 +213,11 @@ public class HTTPRequest {
             stringBuilder.append(line).append("\n");
         }
 
+        connection.disconnect();
+
         if (noErrorOccurred)
-            return stringBuilder.toString();
-        else
-            throw new HTTPConnectionException(
-                    connection.getResponseCode(),
-                    connection.getResponseMessage(),
-                    stringBuilder.toString());
-    }
+            return new HTTPResponse(stringBuilder.toString());
 
-    /**
-     * Starts the connection. <b>{@link #resource(WebResource)} and {@link #type(HTTPVerb)} has to be set before this method</b>
-     *
-     * @param url address to connect to.
-     * @return Not null.
-     * @throws IOException If connection fails.
-     */
-    private HttpURLConnection establishConnection(@NotNull final URL url) throws IOException {
-        Preconditions.checkState(connectionType != null, "connectionType has to be set");
-        Preconditions.checkState(webResource != null, "webResource has to be set");
-
-        LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort() + url.getPath());
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod(connectionType.getValue());
-        connection.setConnectTimeout(CONNECTION_TIMEOUT);
-
-        connection.addRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
-        if (authentication != null) {
-            LOG.debug("settings auth header...");
-            connection.addRequestProperty("Authorization", authentication.getAuthHeader());
-        }
-
-        if (body != null) {
-            // send body (json)
-            LOG.debug("Sending body...");
-            connection.setDoOutput(true);
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(body.getBytes(CHARSET));
-            outputStream.close();
-        }
-        LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString());
-        return connection;
+        throw new HTTPConnectionException(connection.getResponseCode(), connection.getResponseMessage(), stringBuilder.toString());
     }
 }

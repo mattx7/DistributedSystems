@@ -50,6 +50,7 @@ public class Application {
 
             // interactions
             User user = insertUser();
+            LOG.debug("New user " + user.getName() + ":" + user.getPassword());
             handleRegisterIfNecessary(client, user);
             showHelpMessage();
             awaitAndHandleCommand(client, user);
