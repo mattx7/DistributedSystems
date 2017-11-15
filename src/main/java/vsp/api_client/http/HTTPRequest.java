@@ -11,6 +11,8 @@ import vsp.api_client.http.web_resource.WebResource;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Representation of an request for a REST-API.
@@ -177,47 +179,66 @@ public class HTTPRequest {
         LOG.debug("Connecting to " + url.getHost() + ":" + url.getPort() + url.getPath());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+        connection.setRequestProperty("Accept-Charset", CHARSET);
         connection.setRequestMethod(connectionType.getValue());
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
+        connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
 
+
+        // AUTHORIZATION
         if (authentication != null) {
-            LOG.debug("settings auth header...");
+            LOG.debug("Auth header: " + authentication.getAuthHeader());
             connection.setRequestProperty("Authorization", authentication.getAuthHeader());
         }
 
+        // BODY
         if (body != null) {
             // send body (json)
-            connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
-
             LOG.debug("Sending body...");
             try {
-                connection.setDoOutput(true);
+                connection.setDoOutput(true); // triggers post
                 OutputStream outputStream = connection.getOutputStream();
                 outputStream.write(body.getBytes(CHARSET));
                 outputStream.close();
             } catch (final IOException e) {
-                LOG.error(e);
+                LOG.error("Error while sending body: " + e);
             }
         }
-        LOG.debug("Connection:" + connection.getRequestMethod() + connection.getHeaderFields().toString() + connection.getContentType());
 
+        logConnection(connection);
+        connection.connect();
 
+        // get response from input- or error stream
         final boolean noErrorOccurred = connection.getErrorStream() == null;
-        BufferedReader responseReader = noErrorOccurred ?
+        final BufferedReader responseReader = noErrorOccurred ?
                 getReader(connection.getInputStream()) :
                 getReader(connection.getErrorStream());
-
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = responseReader.readLine()) != null) {
-            stringBuilder.append(line).append("\n");
-        }
+        final String response = extractResponse(responseReader);
 
         connection.disconnect();
 
+        // return or exc
         if (noErrorOccurred)
-            return new HTTPResponse(stringBuilder.toString());
+            return new HTTPResponse(response);
+        else
+            throw new HTTPConnectionException(connection.getResponseCode(), connection.getResponseMessage(), response);
+    }
 
-        throw new HTTPConnectionException(connection.getResponseCode(), connection.getResponseMessage(), stringBuilder.toString());
+    @NotNull
+    private String extractResponse(BufferedReader responseReader) throws IOException {
+        StringBuilder buildResponse = new StringBuilder();
+        String line;
+        while ((line = responseReader.readLine()) != null) {
+            buildResponse.append(line).append("\n");
+        }
+        return buildResponse.toString();
+    }
+
+    private void logConnection(HttpURLConnection connection) {
+        LOG.debug("Connection:" + connection.getRequestMethod() + connection.getContentType());
+        // LOG Header
+        for (Map.Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
+            LOG.debug("Header: " + header.getKey() + " = " + header.getValue());
+        }
     }
 }
