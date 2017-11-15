@@ -256,3 +256,26 @@ curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlV
     }
   ], 
   "status": "success"
+  # Quest 2
+```
+curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.4:5000/floor
+```
+
+>"message": "\nYou enter the dungeon and find a total mess.\nIn the far back you hear the shuffling of rats.\n        ", 
+  "next": "/floor_u1/rats"
+  
+```
+curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.4:5000/floor_u1/rats
+```
+> "message": "\nYou approach the rats and they obviously do not fear you.\nRemember you are not done until all rats are gone or you are gone.\n(Resolve all steps and post the tokens here afterwards)\n        ", 
+  "required_players": 1, 
+  "required_tokens": [
+    "Token:Rat Tail", 
+    "Token:Rat Eye", 
+    "Token:Rat Leg"
+  ], 
+  "steps_todo": [
+    "/floor_u1/rats/1", 
+    "/floor_u1/rats/2", 
+    "/floor_u1/rats/3"
+  ]
