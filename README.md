@@ -3,12 +3,24 @@
 ## Environment
 
 Container Harbor: https://141.22.34.22/
+Enter your Docker Container 
 
 Run the jar with:  `java -jar vsp_abw286.jar`
+
+Register with new User or Login with existing one
+
+type !help to see available commands
+
+
+
+
 
 ## Testing of the given REST-api
 
 ### Registration
+
+
+________________________________________________________________
 
 request:
 
@@ -16,7 +28,7 @@ request:
 curl -H "Content-Type: application/json" -X POST http://172.19.0.3:5000/users -d '{"name":"<name>", "password":"<password>"}'
 ```
 
-responce:
+response:
 
 ```json
 {
