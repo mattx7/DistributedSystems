@@ -123,10 +123,16 @@ public class HTTPRequest {
         return this;
     }
 
-    public HTTPRequest body(@NotNull final String str) throws IOException {
-        Preconditions.checkNotNull(str, "obj should not be null.");
+    /**
+     * Saves a json to send it in the body.
+     *
+     * @param json Not null.
+     * @return This instance for inline use.
+     */
+    public HTTPRequest body(@NotNull final String json) throws IOException {
+        Preconditions.checkNotNull(json, "json should not be null.");
 
-        this.body = str;
+        this.body = json;
         LOG.debug("Body " + this.body);
         return this;
     }

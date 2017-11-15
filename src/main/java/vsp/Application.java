@@ -35,6 +35,7 @@ public class Application {
     private static final String NEW_TOKEN = "!newToken";
     private static final String TOKEN = "!token";
     private static final String SET_TOKEN = "!setToken";
+    private static final String VISITS = "!visits";
     private static Logger LOG = Logger.getLogger(Application.class);
 
     /**
@@ -102,6 +103,9 @@ public class Application {
                             client.setDefaultURL();
                             print("Host changed to default");
                             break;
+                        case VISITS:
+                            print(client.get(user, "visits").getJson());
+                            break;
                         case TOKEN:
                             final StringBuilder stringBuilder = new StringBuilder();
                             for (Map.Entry<String, String> entry : client.getTokenMap().entrySet()) {
@@ -147,6 +151,9 @@ public class Application {
                         case SET_TOKEN:
                             user.setToken(client.getToken(param2)); // TODO BAD design token nicht im user ändern
                             print("Auth token is now set to " + param2);
+                            break;
+                        case VISITS:
+                            print(client.post(user, "/visits", param2).getJson());
                             break;
                         default:
                             showHelpMessage();
@@ -208,12 +215,13 @@ public class Application {
                 QUESTS + " - view open quests \n" +
                 QUEST + " <id> - shows the quets \n" +
                 MAP + " <location> - view the given location \n" +
-                DELIVERIES + " <questId> [body]- ??? \n" +
+                DELIVERIES + " <questId> [body] - ??? \n" +
                 TASK + "\" <questId> - ??? \n" +
                 HOST + " [<ip> <port>] - change host if nothing set it will be changed to default \n" +
                 NEW_TOKEN + " <key> <token> - saves a token under the key \n" +
                 TOKEN + " - returns list of saved tokens \n" +
                 SET_TOKEN + "  <key> - Sets a new token in the header \n" +
+                VISITS + " [<body>] - Visits a location \n" +
                 "Debug commands: \n" +
                 GET + " <path> - GET on given path \n" +
                 POST + " <path> <body> - POST with given path and body \n" +

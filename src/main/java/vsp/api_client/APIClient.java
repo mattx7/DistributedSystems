@@ -182,7 +182,6 @@ public class APIClient {
                 .send();
     }
 
-
     public HTTPResponse questDeliveries(@NotNull final User user,
                                         @NotNull final Integer questId,
                                         @NotNull final String tokenKey) throws IOException, TokenNotFoundException {
