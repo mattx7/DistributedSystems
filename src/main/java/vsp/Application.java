@@ -22,7 +22,8 @@ public class Application {
     private static final String WHOAMI = "!whoami";
     private static final String QUESTS = "!quests";
     private static final String MAP = "!map";
-    private static final String DELIVERIES = "!deliveries";
+    private static final String DELIVER = "!deliver";
+    private static final String DELIVERIES = DELIVER + "ies";
     private static final String TASK = "!task";
     private static final String QUIT = "!quit";
     private static final String GET = "!get";
@@ -179,21 +180,35 @@ public class Application {
                         case NEW_TOKEN:
                             client.saveToken(param2, param3);
                             break;
-                        case DELIVERIES:
-                            print(client.questDeliveries(user, Integer.valueOf(param2), param3).getJson());
-                            break;
                         default:
                             showHelpMessage();
                             break;
                     }
 
+                } else if (parameter.length == 4) {
+                    // commands with three params
+                    String param1 = parameter[0];
+                    String param2 = parameter[1];
+                    String param3 = parameter[2];
+                    String param4 = parameter[3];
+
+                    switch (param1) {
+                        case DELIVER:
+                            print(client.deliver(user, Integer.valueOf(param2), Integer.valueOf(param3), param4).getJson());
+                            break;
+                        default:
+                            showHelpMessage();
+                            break;
+                    }
                 } else {
                     showHelpMessage();
                 }
             } catch (final IOException | NumberFormatException e) {
                 LOG.error(e);
-            } catch (TokenNotFoundException e) {
+            } catch (final TokenNotFoundException e) {
                 LOG.error("Token not found!!!");
+            } catch (final Exception e) {
+                LOG.error(e);
             }
         }
     }
@@ -215,7 +230,8 @@ public class Application {
                 QUESTS + " - view open quests \n" +
                 QUEST + " <id> - shows the quets \n" +
                 MAP + " <location> - view the given location \n" +
-                DELIVERIES + " <questId> [body] - ??? \n" +
+                DELIVERIES + " <questId> - view delivery \n" +
+                DELIVER + " <questID> <taskID> <tokenName> - delivers quest" +
                 TASK + "\" <questId> - ??? \n" +
                 HOST + " [<ip> <port>] - change host if nothing set it will be changed to default \n" +
                 NEW_TOKEN + " <key> <token> - saves a token under the key \n" +

@@ -182,9 +182,10 @@ public class APIClient {
                 .send();
     }
 
-    public HTTPResponse questDeliveries(@NotNull final User user,
-                                        @NotNull final Integer questId,
-                                        @NotNull final String tokenKey) throws IOException, TokenNotFoundException {
+    public HTTPResponse deliver(@NotNull final User user,
+                                @NotNull final Integer questId,
+                                @NotNull final Integer taskId,
+                                @NotNull final String tokenKey) throws IOException, TokenNotFoundException {
         LOG.debug("View deliveries");
         return HTTPRequest
                 .to(targetURL)
@@ -194,7 +195,7 @@ public class APIClient {
                         "deliveries"))
                 .type(HTTPVerb.POST)
                 .auth(HTTPTokenAuth.forUser(user))
-                .body("{\"tokens\":{\"/blackboard/tasks/2\":\"" + getToken(tokenKey).getToken() + "\"}}")
+                .body("{\"tokens\":{\"/blackboard/tasks/" + taskId + "\":\"" + getToken(tokenKey).getToken() + "\"}}")
                 .send();
     }
 
