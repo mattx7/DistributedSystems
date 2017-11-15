@@ -44,6 +44,7 @@ public class APIClient {
                 .to(targetURL)
                 .resource(new DebugResource(path))
                 .type(HTTPVerb.GET)
+                .auth(HTTPTokenAuth.forUser(user))
                 .body(user)
                 .send();
     }
@@ -56,7 +57,21 @@ public class APIClient {
                 .to(targetURL)
                 .resource(new DebugResource(path))
                 .type(HTTPVerb.POST)
-                .body(user)
+                .auth(HTTPTokenAuth.forUser(user))
+                .body(body)
+                .send();
+    }
+
+    public HTTPResponse put(@NotNull final User user,
+                            @NotNull final String path,
+                            @NotNull final String body) throws IOException {
+        LOG.debug("Registration with user " + user.getName());
+        return HTTPRequest
+                .to(targetURL)
+                .resource(new DebugResource(path))
+                .type(HTTPVerb.PUT)
+                .auth(HTTPTokenAuth.forUser(user))
+                .body(body)
                 .send();
     }
 
@@ -113,13 +128,13 @@ public class APIClient {
                 .send();
     }
 
-    // TODO quests
-    public HTTPResponse quests() throws IOException {
+    public HTTPResponse quests(@NotNull User user) throws IOException {
         LOG.debug("View quests");
         return HTTPRequest
                 .to(targetURL)
                 .resource(MainResource.QUESTS)
                 .type(HTTPVerb.GET)
+                .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
 
@@ -133,7 +148,7 @@ public class APIClient {
                         String.valueOf(questId),
                         "deliveries"))
                 .type(HTTPVerb.GET)
-                .auth(HTTPBasicAuth.forUser(user))
+                .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
 
@@ -144,7 +159,7 @@ public class APIClient {
                 .to(targetURL)
                 .resource(SubResource.from(MainResource.QUESTS, String.valueOf(questId), "tasks"))
                 .type(HTTPVerb.GET)
-                .auth(HTTPBasicAuth.forUser(user))
+                .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
 
@@ -156,7 +171,7 @@ public class APIClient {
                 .to(targetURL)
                 .resource(SubResource.from(MainResource.MAP, location))
                 .type(HTTPVerb.GET)
-                .auth(HTTPBasicAuth.forUser(user))
+                .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
 

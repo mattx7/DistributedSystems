@@ -26,6 +26,8 @@ public class Application {
     private static final String QUIT = "!quit";
     private static final String GET = "!get";
     private static final String POST = "!post";
+    private static final String PUT = "!put";
+
     private static final String AWAIT_COMMAND_MARKER = "#IN>";
     private static Logger LOG = Logger.getLogger(Application.class);
 
@@ -55,7 +57,6 @@ public class Application {
             handleRegisterIfNecessary(client, user);
             showHelpMessage();
             awaitAndHandleCommand(client, user);
-
         } catch (final IOException e) {
             LOG.error(e);
         }
@@ -82,7 +83,7 @@ public class Application {
                             break;
                         case QUESTS:
                             print("Quests...");
-                            print(client.quests().getJson());
+                            print(client.quests(user).getJson());
                             /*  client
                                     .quests()
                                     .getAs(QuestWrapper.class) // TODO make null safe
@@ -130,6 +131,9 @@ public class Application {
                     switch (param1) {
                         case POST:
                             print(client.post(user, param2, param3).getJson());
+                            break;
+                        case PUT:
+                            print(client.put(user, param2, param3).getJson());
                         default:
                             showHelpMessage();
                             break;
@@ -164,7 +168,8 @@ public class Application {
                 TASK + "\" <questId> - ??? \n" +
                 "Debug commands: \n" +
                 GET + " <path> - GET on given path \n" +
-                POST + " <path> <body> - POST with given path and body \n"
+                POST + " <path> <body> - POST with given path and body \n" +
+                PUT + " <path> <body> - POST with given path and body \n"
         );
     }
 
@@ -174,9 +179,8 @@ public class Application {
             final HTTPResponse response = client.register(user);
             LOG.debug(response);
             print("User is now registered!");
-
-        } catch (final HTTPConnectionException e) {
-            if (e.getErrorCode() == 409)
+        } catch (final IOException e) {
+            if (e instanceof HTTPConnectionException && ((HTTPConnectionException) e).getErrorCode() == 409)
                 print("User already registered!");
             else
                 LOG.error(e.getMessage());

@@ -184,7 +184,6 @@ public class HTTPRequest {
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
         connection.setRequestProperty("Content-Type", "application/json; charset=" + CHARSET);
 
-
         // AUTHORIZATION
         if (authentication != null) {
             LOG.debug("Auth header: " + authentication.getAuthHeader());
@@ -205,9 +204,6 @@ public class HTTPRequest {
             }
         }
 
-        logConnection(connection);
-        connection.connect();
-
         // get response from input- or error stream
         final boolean noErrorOccurred = connection.getErrorStream() == null;
         final BufferedReader responseReader = noErrorOccurred ?
@@ -215,6 +211,7 @@ public class HTTPRequest {
                 getReader(connection.getErrorStream());
         final String response = extractResponse(responseReader);
 
+        //logConnection(connection);
         connection.disconnect();
 
         // return or exc

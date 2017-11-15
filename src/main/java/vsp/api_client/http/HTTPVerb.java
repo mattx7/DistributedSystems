@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Offers all possible HTTP-Verbs for this application.
  */
 public enum HTTPVerb {
-    GET("GET"), POST("POST");
+    GET("GET"), POST("POST"), PUT("PUT");
 
     @NotNull
     private String value;
