@@ -4,6 +4,8 @@ package vsp.api_client;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
+import vsp.TokenNotFoundException;
+import vsp.api_client.entities.Token;
 import vsp.api_client.entities.User;
 import vsp.api_client.http.HTTPRequest;
 import vsp.api_client.http.HTTPResponse;
@@ -15,6 +17,8 @@ import vsp.api_client.http.web_resource.MainResource;
 import vsp.api_client.http.web_resource.SubResource;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Offers operations from the given API.
@@ -29,10 +33,25 @@ public class APIClient {
     @NotNull
     private String targetURL;
 
+    @NotNull
+    private String defaultURL;
+
+    @NotNull
+    private Map<String, String> tokenMap = new HashMap<>();
+
     public APIClient(@NotNull final String restApiAddress,
                      @NotNull final Integer restApiPort) {
         this.targetURL = String.format("%s://%s:%d", PROTOCOL, restApiAddress, restApiPort);
+        this.defaultURL = targetURL;
         LOG.debug("URL: " + targetURL);
+    }
+
+    public void setTargetURL(@NotNull String restApiAddress, @NotNull final Integer restApiPort) {
+        this.targetURL = String.format("%s://%s:%d", PROTOCOL, restApiAddress, restApiPort);
+    }
+
+    public void setDefaultURL() {
+        this.targetURL = defaultURL;
     }
 
     // ======= for debug/testing ======
@@ -45,7 +64,6 @@ public class APIClient {
                 .resource(new DebugResource(path))
                 .type(HTTPVerb.GET)
                 .auth(HTTPTokenAuth.forUser(user))
-                .body(user)
                 .send();
     }
 
@@ -138,9 +156,21 @@ public class APIClient {
                 .send();
     }
 
+    public HTTPResponse quest(User user, String questId) throws IOException {
+        LOG.debug("View quest with id: " + questId);
+        return HTTPRequest
+                .to(targetURL)
+                .resource(SubResource.from(
+                        MainResource.QUESTS,
+                        String.valueOf(questId)))
+                .type(HTTPVerb.GET)
+                .auth(HTTPTokenAuth.forUser(user))
+                .send();
+    }
+
     public HTTPResponse questDeliveries(@NotNull final User user,
                                         @NotNull final Integer questId) throws IOException {
-        LOG.debug("View quests");
+        LOG.debug("View deliveries");
         return HTTPRequest
                 .to(targetURL)
                 .resource(SubResource.from(
@@ -152,18 +182,38 @@ public class APIClient {
                 .send();
     }
 
-    public HTTPResponse questTasks(@NotNull final User user,
-                                   @NotNull final Integer questId) throws IOException {
-        LOG.debug("View quests");
+
+    public HTTPResponse questDeliveries(@NotNull final User user,
+                                        @NotNull final Integer questId,
+                                        @NotNull final String tokenKey) throws IOException, TokenNotFoundException {
+        LOG.debug("View deliveries");
         return HTTPRequest
                 .to(targetURL)
-                .resource(SubResource.from(MainResource.QUESTS, String.valueOf(questId), "tasks"))
+                .resource(SubResource.from(
+                        MainResource.QUESTS,
+                        String.valueOf(questId),
+                        "deliveries"))
+                .type(HTTPVerb.POST)
+                .auth(HTTPTokenAuth.forUser(user))
+                .body("{\"tokens\":{\"/blackboard/tasks/2\":\"" + getToken(tokenKey).getToken() + "\"}}")
+                .send();
+    }
+
+    public HTTPResponse questTasks(@NotNull final User user,
+                                   @NotNull final Integer questId) throws IOException {
+        LOG.debug("View task");
+        return HTTPRequest
+                .to(targetURL)
+                .resource(SubResource.from(
+                        MainResource.QUESTS,
+                        String.valueOf(questId),
+                        "tasks"))
                 .type(HTTPVerb.GET)
                 .auth(HTTPTokenAuth.forUser(user))
                 .send();
     }
-
     // TODO map
+
     public HTTPResponse map(@NotNull final User user,
                             @NotNull final String location) throws IOException {
         LOG.debug("View quests");
@@ -175,5 +225,20 @@ public class APIClient {
                 .send();
     }
 
+    public void saveToken(String name, String token) {
+        tokenMap.put(name, token);
+        LOG.debug("Saved token " + name + "!");
+    }
 
+    @NotNull
+    public Map<String, String> getTokenMap() {
+        return tokenMap;
+    }
+
+    public Token getToken(String key) throws TokenNotFoundException {
+        String token = tokenMap.get(key);
+        if (token == null)
+            throw new TokenNotFoundException();
+        return new Token(token, null);
+    }
 }

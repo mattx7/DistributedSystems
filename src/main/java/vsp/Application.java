@@ -12,6 +12,7 @@ import vsp.api_client.utility.BlackBoard;
 import java.io.Console;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * Runs application and interactions.
@@ -29,6 +30,11 @@ public class Application {
     private static final String PUT = "!put";
 
     private static final String AWAIT_COMMAND_MARKER = "#IN>";
+    private static final String HOST = "!host";
+    private static final String QUEST = "!quest";
+    private static final String NEW_TOKEN = "!newToken";
+    private static final String TOKEN = "!token";
+    private static final String SET_TOKEN = "!setToken";
     private static Logger LOG = Logger.getLogger(Application.class);
 
     /**
@@ -92,6 +98,20 @@ public class Application {
                                     .map(e -> e.getId() + ": " + e.getName())
                                     .forEach(Application::print);*/
                             break;
+                        case HOST:
+                            client.setDefaultURL();
+                            print("Host changed to default");
+                            break;
+                        case TOKEN:
+                            final StringBuilder stringBuilder = new StringBuilder();
+                            for (Map.Entry<String, String> entry : client.getTokenMap().entrySet()) {
+                                stringBuilder
+                                        .append(entry.getKey())
+                                        .append(" -> ")
+                                        .append(entry.getValue());
+                            }
+                            print(stringBuilder.toString());
+                            break;
                         default:
                             showHelpMessage();
                             break;
@@ -111,13 +131,23 @@ public class Application {
                             print(client
                                     .questDeliveries(user, Integer.valueOf(param2))
                                     .getJson());
+                            break;
                         case TASK:
                             print("Task...");
                             print(client
                                     .questTasks(user, Integer.valueOf(param2))
                                     .getJson());
+                            break;
                         case GET:
                             print(client.get(user, param2).getJson());
+                            break;
+                        case QUEST:
+                            print(client.quest(user, param2).getJson());
+                            break;
+                        case SET_TOKEN:
+                            user.setToken(client.getToken(param2)); // TODO BAD design token nicht im user ändern
+                            print("Auth token is now set to " + param2);
+                            break;
                         default:
                             showHelpMessage();
                             break;
@@ -134,6 +164,17 @@ public class Application {
                             break;
                         case PUT:
                             print(client.put(user, param2, param3).getJson());
+                            break;
+                        case HOST:
+                            client.setTargetURL(param2, Integer.valueOf(param3));
+                            print("Host changed to " + param2 + ":" + param3);
+                            break;
+                        case NEW_TOKEN:
+                            client.saveToken(param2, param3);
+                            break;
+                        case DELIVERIES:
+                            print(client.questDeliveries(user, Integer.valueOf(param2), param3).getJson());
+                            break;
                         default:
                             showHelpMessage();
                             break;
@@ -144,6 +185,8 @@ public class Application {
                 }
             } catch (final IOException | NumberFormatException e) {
                 LOG.error(e);
+            } catch (TokenNotFoundException e) {
+                LOG.error("Token not found!!!");
             }
         }
     }
@@ -163,9 +206,14 @@ public class Application {
                 QUIT + " - closes the terminal \n" +
                 WHOAMI + " - information about me \n" +
                 QUESTS + " - view open quests \n" +
+                QUEST + " <id> - shows the quets \n" +
                 MAP + " <location> - view the given location \n" +
-                DELIVERIES + " <questId> - ??? \n" +
+                DELIVERIES + " <questId> [body]- ??? \n" +
                 TASK + "\" <questId> - ??? \n" +
+                HOST + " [<ip> <port>] - change host if nothing set it will be changed to default \n" +
+                NEW_TOKEN + " <key> <token> - saves a token under the key \n" +
+                TOKEN + " - returns list of saved tokens \n" +
+                SET_TOKEN + "  <key> - Sets a new token in the header \n" +
                 "Debug commands: \n" +
                 GET + " <path> - GET on given path \n" +
                 POST + " <path> <body> - POST with given path and body \n" +
@@ -190,6 +238,7 @@ public class Application {
         final Token token = client.login(user).getAs(Token.class);
         user.setToken(token);
         print((token == null) ? "Login failed!" : "User logged in");
+        client.saveToken("default", token.getToken()); // TODO NPE
     }
 
     private static void print(@NotNull String message) {

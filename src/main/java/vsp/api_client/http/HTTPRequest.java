@@ -123,6 +123,14 @@ public class HTTPRequest {
         return this;
     }
 
+    public HTTPRequest body(@NotNull final String str) throws IOException {
+        Preconditions.checkNotNull(str, "obj should not be null.");
+
+        this.body = str;
+        LOG.debug("Body " + this.body);
+        return this;
+    }
+
     /**
      * Sets a authentication for the http connection.
      *

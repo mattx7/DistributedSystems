@@ -1,6 +1,7 @@
 package vsp.api_client.entities;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
@@ -9,12 +10,12 @@ public class Token {
     @NotNull
     private final String token;
 
-    @NotNull
+    @Nullable
     private final Date date; // TODO test if this is set after json conversion
 
 
     public Token(@NotNull final String token,
-                 @NotNull final Date date) {
+                 @Nullable final Date date) {
         this.token = token;
         this.date = date;
     }
@@ -24,7 +25,7 @@ public class Token {
         return token;
     }
 
-    @NotNull
+    @Nullable
     public Date getDate() {
         return date;
     }

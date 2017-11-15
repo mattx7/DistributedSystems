@@ -24,7 +24,7 @@ public class HTTPTokenAuth implements HTTPAuthentication {
 
     @NotNull
     public String getAuthHeader() {
-        return "Bearer " + token.getToken();
+        return "Token " + token.getToken();
     }
 
     @Override
