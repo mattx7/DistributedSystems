@@ -105,7 +105,7 @@ public class Application {
                             print("Host changed to default");
                             break;
                         case VISITS:
-                            print(client.get(user, "visits").getJson());
+                            print(client.get(user, "/visits").getJson());
                             break;
                         case TOKEN:
                             final StringBuilder stringBuilder = new StringBuilder();
