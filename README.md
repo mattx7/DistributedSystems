@@ -226,3 +226,33 @@ curl -H "Content-Type: application/json" -X GET http://1234:1234@172.19.0.3:5000
 ```
 
 
+```
+curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.32:5000/visits 
+```
+
+"message": "\nThe Throneroom lays ahead and a buttler stays in front of it. Do you want to approach it? (POST)\n   
+
+``` 
+curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.32:5000/visits 
+```
+ "message": "\nWelcome to the Throneroom! Well they have told you to come visit the King?\nWell, do you have an audience? NO? Then go away and tell your supervisor that the King does not have time\nfor every new greenhorn in town. But consider your quest as fullfilled - at least you visited the Throneroom.\nGive this token back as a symbol of fullfillment ( quest deliveries, POST {\"tokens\":{\"<task_uri>\":token}} )\n", 
+  "token": "Z0FBQUFBQmFEQXU0Z1VrQXplT1l0akVoSlVEWnA2WjJxLWVKcG1mNmNVNU5vYVV6TGlUNnRwT01SdVJnY2lLMTdFbFR3VF9sVHBmZWlaOWNxOUFjVjdCTkhuS0dlcDZLWnpPZmk0V1g0NTdhXzRXOUxIRFRucEZ6NXZPbFBDa0JQOW9qWHpHcU5nZjFJNHI4S3FwdWY5bVR3MDliUDNWS0QweDlVaXZwenlZUG1ZdmliVjUtaUhBdWVuU2dWWU8xdUYycVJrMXNUSEVqMEZhOGlVdnRuTFBuUGQ4ZUY0b3QwS1JuRU5oWXc4dFh1VmZjN2R4RVA1X0FnVnBfZ1p2M1FrQ0k0a1Jab3JRWTBrLU5nRDFhT29jT1g2RGhXekhyaml6djhYcmtFN3lGMmhyeE9ERTFzVlBFR1lIVVJrN0pYa3VtLUlvNXJKallXQmI5ZS1vd0hRUGZENXFGcDBFaDRfYWpvckhRcFhqaFdHS0JLWFNRS3BudHAzRldOaXMta1FmX0ExdTVRZDdzMnhybzZJWll3U3FxUk5femRQLVhLdU1hVmtjYlpJVDVnZVNGYTF6UWRMOUhaenEySjZFSGNvSVl4MXZfYU5Nb1doNDNsLWlHb2tJcGRFMEQtWTNNb0UzMGFqZnhJYlBlX21LSGtfaE52eXRzaWxzb2YwT01HVUMwUW4yTUgzUm1LS0lzcU82UUVxaVNJYlhncjdTX3JPVjh0bDJpNmdzVlNyT3FCeGlodmVFYWUyWXQ2bG0tZnhXN2pMS2hUb3pveXJzR3phcWVzQWRLSnVBc2RwVU1OTGFzREY0U0YtSU5zcVZJbUs2bEl1bDlGaUtidkxDLXNKSUZWRWVQTDdWUw==", 
+  "token_name": "Token:Visit the Throneroom"
+
+```
+curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" -d '{"tokens":{"/blackboard/tasks/2":"Z0FBQUFBQmFEQXU0Z1VrQXplT1l0akVoSlVEWnA2WjJxLWVKcG1mNmNVNU5vYVV6TGlUNnRwT01SdVJnY2lLMTdFbFR3VF9sVHBmZWlaOWNxOUFjVjdCTkhuS0dlcDZLWnpPZmk0V1g0NTdhXzRXOUxIRFRucEZ6NXZPbFBDa0JQOW9qWHpHcU5nZjFJNHI4S3FwdWY5bVR3MDliUDNWS0QweDlVaXZwenlZUG1ZdmliVjUtaUhBdWVuU2dWWU8xdUYycVJrMXNUSEVqMEZhOGlVdnRuTFBuUGQ4ZUY0b3QwS1JuRU5oWXc4dFh1VmZjN2R4RVA1X0FnVnBfZ1p2M1FrQ0k0a1Jab3JRWTBrLU5nRDFhT29jT1g2RGhXekhyaml6djhYcmtFN3lGMmhyeE9ERTFzVlBFR1lIVVJrN0pYa3VtLUlvNXJKallXQmI5ZS1vd0hRUGZENXFGcDBFaDRfYWpvckhRcFhqaFdHS0JLWFNRS3BudHAzRldOaXMta1FmX0ExdTVRZDdzMnhybzZJWll3U3FxUk5femRQLVhLdU1hVmtjYlpJVDVnZVNGYTF6UWRMOUhaenEySjZFSGNvSVl4MXZfYU5Nb1doNDNsLWlHb2tJcGRFMEQtWTNNb0UzMGFqZnhJYlBlX21LSGtfaE52eXRzaWxzb2YwT01HVUMwUW4yTUgzUm1LS0lzcU82UUVxaVNJYlhncjdTX3JPVjh0bDJpNmdzVlNyT3FCeGlodmVFYWUyWXQ2bG0tZnhXN2pMS2hUb3pveXJzR3phcWVzQWRLSnVBc2RwVU1OTGFzREY0U0YtSU5zcVZJbUs2bEl1bDlGaUtidkxDLXNKSUZWRWVQTDdWUw=="}}' 172.19.0.3:5000/blackboard/quests/1/deliveries 
+```
+
+ "message": "Created Delivery", 
+  "object": [
+    {
+      "deliverables": [
+        162
+      ], 
+      "id": 354, 
+      "quest": 1, 
+      "timestamp": "2017-11-15T10:42:47.348559+00:00", 
+      "user": "peter"
+    }
+  ], 
+  "status": "success"
