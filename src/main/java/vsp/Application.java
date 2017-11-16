@@ -11,7 +11,6 @@ import vsp.api_client.utility.BlackBoard;
 
 import java.io.Console;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -51,13 +50,12 @@ public class Application {
     private Application() {
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         print("Starting application...");
-        InetAddress apiAddress;
+        BlackBoard blackBoard = new BlackBoard(BLACKBOARD_PORT);
 
         try {
-            apiAddress = BlackBoard.getIP(BLACKBOARD_PORT); // TODO Port
-            APIClient client = new APIClient(apiAddress.getHostAddress(), 5000);
+            APIClient client = new APIClient(blackBoard.getHostAddress(), blackBoard.getPort());
 
             // interactions
             User user = insertUser();

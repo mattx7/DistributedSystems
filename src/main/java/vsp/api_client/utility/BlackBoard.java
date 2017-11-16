@@ -1,37 +1,63 @@
 package vsp.api_client.utility;
 
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import vsp.api_client.http.HTTPRequest;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 public class BlackBoard {
-
     private static final Logger LOG = Logger.getLogger(HTTPRequest.class);
 
-    /**
-     * Private constructor for utility classes.
-     */
-    private BlackBoard() {
-    }
+    private final Integer port;
+
+    private final String hostAddress;
 
     /**
-     * @param remotePort
-     * @return
+     * Initialize blackboard. Will send a broadcast and hopefully get port and hostaddress.
+     *
+     * @param remotePort Not null.
      * @throws IOException
-     */ // TODO LP WTF is that
-    public static InetAddress getIP(int remotePort) throws IOException {
-        DatagramSocket datagramSocket = new DatagramSocket(remotePort);
+     */
+    public BlackBoard(int remotePort) throws IOException {
+        // Platz für Pakete vorbereiten (1024 Buffer)
         byte[] byteArray = new byte[1024];
-        DatagramPacket receivePacket = new DatagramPacket(byteArray, byteArray.length);
-        datagramSocket.receive(receivePacket);
-        datagramSocket.close();
-        return receivePacket.getAddress();
+
+        // Datagrammsocket erzeugen + Socket binden
+        DatagramPacket receivePacket;
+        try (DatagramSocket datagramSocket = new DatagramSocket(remotePort)) {
+            LOG.debug(String.format("datagramSocket created, listens on port %d", remotePort));
+
+            // Erzeugen eines neuen Datagrammes mit dem ByteArray (Byte-Puffer & Größe des Puffers)
+            receivePacket = new DatagramPacket(byteArray, byteArray.length);
+
+            // Warten auf Ankunft eines Datagrammes (solange, bis ein Paket eintrifft)
+            datagramSocket.receive(receivePacket);
+
+            // Response holen, Port auslesen und speichern
+            String responseMessage = new String(receivePacket.getData(), 0, receivePacket.getLength());
+
+            port = Integer.parseInt(responseMessage.replaceAll("[\\D]", ""));
+            LOG.debug(String.format("found the blackboard port %d", port));
+            hostAddress = receivePacket.getAddress().getHostAddress();
+
+            // Schließen des Sockets
+            datagramSocket.close();
+            LOG.debug("datagramSocket closed!");
+        }
     }
 
-    // TODO getPort
+    /**
+     * @return the blackboard port
+     */
+    @NotNull
+    public Integer getPort() {
+        return port;
+    }
 
+    public String getHostAddress() {
+        return hostAddress;
+    }
 }

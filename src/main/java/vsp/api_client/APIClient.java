@@ -1,6 +1,7 @@
 package vsp.api_client;
 
 
+import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import vsp.Application;
@@ -41,6 +42,9 @@ public class APIClient {
 
     public APIClient(@NotNull final String restApiAddress,
                      @NotNull final Integer restApiPort) {
+        Preconditions.checkNotNull(restApiAddress, "restApiAddress should not be null.");
+        Preconditions.checkNotNull(restApiPort, "restApiPort should not be null.");
+
         this.targetURL = String.format("%s://%s:%d", PROTOCOL, restApiAddress, restApiPort);
         this.defaultURL = targetURL;
         LOG.debug("URL: " + targetURL);
