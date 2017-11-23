@@ -2,19 +2,15 @@
 
 ## Environment
 
-Container Harbor: https://141.22.34.22/
+## Set up
 
-Enter your Docker Container 
-
-Run the jar with:  `java -jar vsp_abw286.jar`
-
-Register with new User or Login with existing one
-
-type !help to see available commands
-
-
-
-
+* Go to Container Harbor: https://141.22.34.22/ (Login with HAW-account is needed)
+* Create a docker container like discribed in the  task and notice the IP for later.
+* Enter the Jumphost via `ssh -p 443 <HAW-ID>@141.22.34.22`.
+* Enter your Docker Container from the jumphost via `ssh -p 22 root@<IP-of-the-container>`.
+* Run the project with:  `java -jar vsp_abw286.jar`
+* Register with new User or Log in with existing one
+* type !help to see available commands
 
 ## Testing of the given REST-api
 
