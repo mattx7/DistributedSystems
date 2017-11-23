@@ -14,6 +14,16 @@
 
 ## Testing of the given REST-api
 
+### Blackboard
+
+Ask for blackbord service with netcat.
+```
+netcat -ulp 24000
+```
+We receive `{"blackboard_port":5000}`. 
+
+Log into `172.19.0.3` (the blackboard) port 5000.
+
 ### Registration
 
 
