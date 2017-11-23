@@ -300,5 +300,5 @@ curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlh
     "/floor_u1/rats/1", 
     "/floor_u1/rats/2", 
     "/floor_u1/rats/3"
-  ]
+  ]
 ```
