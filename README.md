@@ -26,8 +26,6 @@ Log into `172.19.0.3` (the blackboard) port 5000.
 
 ### Registration
 
-request:
-
 ```
 curl -H "Content-Type: application/json" -X POST http://172.19.0.3:5000/users -d '{"name":"<name>", "password":"<password>"}'
 ```
@@ -108,6 +106,8 @@ curl -H "Content-Type: application/json" -X GET http://1234:1234@172.19.0.3:5000
 ```
 curl -H "Content-Type: application/json" -X GET http://1234:1234@172.19.0.3:5000/blackboard/quests
 ```
+
+receive list of quests:
 
 ```json
 {
@@ -228,24 +228,37 @@ curl -H "Content-Type: application/json" -X GET http://1234:1234@172.19.0.3:5000
 }
 ```
 
+#### Quest 1
+
+visit new host:
 
 ```
 curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.32:5000/visits 
 ```
+responce:
 
-"message": "\nThe Throneroom lays ahead and a buttler stays in front of it. Do you want to approach it? (POST)\n   
+```json
+"message": "\nThe Throneroom lays ahead and a buttler stays in front of it. Do you want to approach it? (POST)\n   
+```
 
 ``` 
 curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.32:5000/visits 
 ```
+receive a token for the quest:
+
+```json
  "message": "\nWelcome to the Throneroom! Well they have told you to come visit the King?\nWell, do you have an audience? NO? Then go away and tell your supervisor that the King does not have time\nfor every new greenhorn in town. But consider your quest as fullfilled - at least you visited the Throneroom.\nGive this token back as a symbol of fullfillment ( quest deliveries, POST {\"tokens\":{\"<task_uri>\":token}} )\n", 
   "token": "Z0FBQUFBQmFEQXU0Z1VrQXplT1l0akVoSlVEWnA2WjJxLWVKcG1mNmNVNU5vYVV6TGlUNnRwT01SdVJnY2lLMTdFbFR3VF9sVHBmZWlaOWNxOUFjVjdCTkhuS0dlcDZLWnpPZmk0V1g0NTdhXzRXOUxIRFRucEZ6NXZPbFBDa0JQOW9qWHpHcU5nZjFJNHI4S3FwdWY5bVR3MDliUDNWS0QweDlVaXZwenlZUG1ZdmliVjUtaUhBdWVuU2dWWU8xdUYycVJrMXNUSEVqMEZhOGlVdnRuTFBuUGQ4ZUY0b3QwS1JuRU5oWXc4dFh1VmZjN2R4RVA1X0FnVnBfZ1p2M1FrQ0k0a1Jab3JRWTBrLU5nRDFhT29jT1g2RGhXekhyaml6djhYcmtFN3lGMmhyeE9ERTFzVlBFR1lIVVJrN0pYa3VtLUlvNXJKallXQmI5ZS1vd0hRUGZENXFGcDBFaDRfYWpvckhRcFhqaFdHS0JLWFNRS3BudHAzRldOaXMta1FmX0ExdTVRZDdzMnhybzZJWll3U3FxUk5femRQLVhLdU1hVmtjYlpJVDVnZVNGYTF6UWRMOUhaenEySjZFSGNvSVl4MXZfYU5Nb1doNDNsLWlHb2tJcGRFMEQtWTNNb0UzMGFqZnhJYlBlX21LSGtfaE52eXRzaWxzb2YwT01HVUMwUW4yTUgzUm1LS0lzcU82UUVxaVNJYlhncjdTX3JPVjh0bDJpNmdzVlNyT3FCeGlodmVFYWUyWXQ2bG0tZnhXN2pMS2hUb3pveXJzR3phcWVzQWRLSnVBc2RwVU1OTGFzREY0U0YtSU5zcVZJbUs2bEl1bDlGaUtidkxDLXNKSUZWRWVQTDdWUw==", 
   "token_name": "Token:Visit the Throneroom"
+```
+deliver the quest with the received token:
 
 ```
 curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" -d '{"tokens":{"/blackboard/tasks/2":"Z0FBQUFBQmFEQXU0Z1VrQXplT1l0akVoSlVEWnA2WjJxLWVKcG1mNmNVNU5vYVV6TGlUNnRwT01SdVJnY2lLMTdFbFR3VF9sVHBmZWlaOWNxOUFjVjdCTkhuS0dlcDZLWnpPZmk0V1g0NTdhXzRXOUxIRFRucEZ6NXZPbFBDa0JQOW9qWHpHcU5nZjFJNHI4S3FwdWY5bVR3MDliUDNWS0QweDlVaXZwenlZUG1ZdmliVjUtaUhBdWVuU2dWWU8xdUYycVJrMXNUSEVqMEZhOGlVdnRuTFBuUGQ4ZUY0b3QwS1JuRU5oWXc4dFh1VmZjN2R4RVA1X0FnVnBfZ1p2M1FrQ0k0a1Jab3JRWTBrLU5nRDFhT29jT1g2RGhXekhyaml6djhYcmtFN3lGMmhyeE9ERTFzVlBFR1lIVVJrN0pYa3VtLUlvNXJKallXQmI5ZS1vd0hRUGZENXFGcDBFaDRfYWpvckhRcFhqaFdHS0JLWFNRS3BudHAzRldOaXMta1FmX0ExdTVRZDdzMnhybzZJWll3U3FxUk5femRQLVhLdU1hVmtjYlpJVDVnZVNGYTF6UWRMOUhaenEySjZFSGNvSVl4MXZfYU5Nb1doNDNsLWlHb2tJcGRFMEQtWTNNb0UzMGFqZnhJYlBlX21LSGtfaE52eXRzaWxzb2YwT01HVUMwUW4yTUgzUm1LS0lzcU82UUVxaVNJYlhncjdTX3JPVjh0bDJpNmdzVlNyT3FCeGlodmVFYWUyWXQ2bG0tZnhXN2pMS2hUb3pveXJzR3phcWVzQWRLSnVBc2RwVU1OTGFzREY0U0YtSU5zcVZJbUs2bEl1bDlGaUtidkxDLXNKSUZWRWVQTDdWUw=="}}' 172.19.0.3:5000/blackboard/quests/1/deliveries 
 ```
+delivered...
 
+```json
  "message": "Created Delivery", 
   "object": [
     {
@@ -258,19 +271,25 @@ curl -X POST -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlV
       "user": "peter"
     }
   ], 
-  "status": "success"
-  # Quest 2
+  "status": "success"
+```
+
+#### Quest 2
+
 ```
 curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.4:5000/floor
 ```
 
->"message": "\nYou enter the dungeon and find a total mess.\nIn the far back you hear the shuffling of rats.\n        ", 
-  "next": "/floor_u1/rats"
-  
+```json
+"message": "\nYou enter the dungeon and find a total mess.\nIn the far back you hear the shuffling of rats.\n", 
+  "next": "/floor_u1/rats"
+```
+
 ```
 curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlhibFJaVTJoTVNIUjVNREp2VkhGVk5tSmlOVzlmT0hjM2VFdFlSRWMwY2xGNE0xVjRaMDF0TFVSWlJUbFJTR0p1U1ZGWk1XWnhSbFpWUzB4M2MyaGFkVUp5TUhCYVJGOU5abGQ0VVc5T01HRjVVVk5qTXpCWlpuWXhRV013VFU1SGNGOURWakl6Tmw5Q1dWaHFkRGg1VlRoRk9HdHRWVmhqWTNacmVtbFFhRTVmU0ZsRFIwOUxTVnBSVjFCblBUMD0iLCAidXNlcm5hbWUiOiAicGV0ZXIifQ==" 172.19.0.4:5000/floor_u1/rats
 ```
-> "message": "\nYou approach the rats and they obviously do not fear you.\nRemember you are not done until all rats are gone or you are gone.\n(Resolve all steps and post the tokens here afterwards)\n        ", 
+```json
+"message": "\nYou approach the rats and they obviously do not fear you.\nRemember you are not done until all rats are gone or you are gone.\n(Resolve all steps and post the tokens here afterwards)\n", 
   "required_players": 1, 
   "required_tokens": [
     "Token:Rat Tail", 
@@ -281,4 +300,5 @@ curl -H "Authorization:Token eyJhdXRoIjogIlowRkJRVUZCUW1GRVFXcEpOVE5uUlVaRWVuTlh
     "/floor_u1/rats/1", 
     "/floor_u1/rats/2", 
     "/floor_u1/rats/3"
-  ]
+  ]
+```
