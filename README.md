@@ -1,6 +1,6 @@
 # DistributedSystems
 
-**Attention: This program can only be used with the given REST-api and a HAW-account!**
+**ATTENTION: This program can only be used with the given REST-api and a HAW-account!**
 
 ## Environment
 
