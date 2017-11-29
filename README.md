@@ -34,7 +34,7 @@ Log into the received IP `172.19.0.14` (the blackboard) port `5000`.
 ### Registration
 
 ```
-curl -H "Content-Type: application/json" -X POST http://172.19.0.3:5000/users -d '{"name":"<name>", "password":"<password>"}'
+curl -H "Content-Type: application/json" -X POST http://172.19.0.14:5000/users -d '{"name":"<name>", "password":"<password>"}'
 ```
 
 response:
