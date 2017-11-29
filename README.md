@@ -20,11 +20,16 @@
 
 Ask for blackbord service with netcat.
 ```
-netcat -ulp 24000
+netcat -ulvp 24000
 ```
-We receive `{"blackboard_port":5000}`. 
+We receive somthing like:
+```
+listening on [any] 24000 ...
+connect to [172.19.0.14] from blackboard.pdui_container [172.19.0.7] 48172
+{"blackboard_port":5000}
+```
 
-Log into `172.19.0.3` (the blackboard) port 5000.
+Log into the received IP `172.19.0.14` (the blackboard) port `5000`.
 
 ### Registration
 
